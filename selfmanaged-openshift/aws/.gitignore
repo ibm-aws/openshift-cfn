@@ -1,4 +1,5 @@
 .DS*
+.DS_Store
 terraform.tfstate*
 .terraform*
 pull-secret
