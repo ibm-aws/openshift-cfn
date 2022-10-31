@@ -20,8 +20,6 @@ The OpenShift pull secret should be downloaded and the file location be made ava
 
 You can select one of the two container storages while installing this Quickstart.
 
-Note: You also have the option to select NFS for Azure or EFS and EBS for AWS in which case there is no additional storage subscription required.
-
 ####	OpenShift Data Foundation (ODF) Subscription
 
 The [Red Hat OpenShift Data Foundation](https://www.redhat.com/en/technologies/cloud-computing/openshift-data-foundation) license is linked as a separate entitlement to your RedHat subscription. If you do not have a separate subscription for ODF, a 60-day trial version is installed.
@@ -31,17 +29,11 @@ Note: OpenShift Container Storage(OCS) is now OpenShift Data Foundation starting
 
 See [AWS topology](aws/README.md#deployment-topology) for more details for AWS.
 
-See [Azure topology](azure/README.md#deployment-topology) for more details for Azure.
-
-
 ## How to Deploy
 
 You need to have [Terraform installed](https://learn.hashicorp.com/terraform/getting-started/install.html) on your client.
 
 See [AWS deployment documentation](aws/README.md#steps-to-deploy) for AWS deployment.
-
-See [Azure deployment documentation](azure/README.md#requirements) for Azure deployment.
-
 
 ## Scaling
 
