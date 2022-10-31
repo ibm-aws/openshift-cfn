@@ -33,7 +33,7 @@ variable "vpc_cidr" {
   type = string
   default     = "10.0.0.0/16"
   description  =  "The CIDR block for the VPC, e.g: 10.0.0.0/16"
- 
+
 }
 variable "aws_access_key_id" {
   type = string
@@ -55,7 +55,7 @@ variable "az" {
 
 variable "cluster_name" {
   type = string
-  default = "cpd-cluster-id"
+  default = "openshift-cluster-id"
 }
 
 variable "installer_workspace" {

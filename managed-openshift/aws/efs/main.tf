@@ -4,7 +4,7 @@
 #  secret_key = var.aws_secret_access_key
 #}
 
-data "aws_vpc" "cpd_vpc" {
+data "aws_vpc" "openshift_vpc" {
   id = var.vpc_id
 }
 
@@ -12,8 +12,8 @@ data "aws_vpc" "cpd_vpc" {
 
 
 
-# resource "null_resource" "cpd_efs" { 
-#     triggers = { 
+# resource "null_resource" "openshift_efs" {
+#     triggers = {
 #         login_cmd           =  var.login_cmd
 #         openshift_username      = regex("username (.*) --password", "${var.login_cmd}")[0]
 #         openshift_api        =  regex("login (.*) --username","${var.login_cmd}")[0]
@@ -23,15 +23,15 @@ data "aws_vpc" "cpd_vpc" {
 #    }
 #     provisioner "local-exec" {
 #         command = <<EOF
-#               bash efs/setup-efs-nfs-provisioner.sh ${self.triggers.openshift_api} '${self.triggers.openshift_username}' '${self.triggers.openshift_password}'  
+#               bash efs/setup-efs-nfs-provisioner.sh ${self.triggers.openshift_api} '${self.triggers.openshift_username}' '${self.triggers.openshift_password}'
 #     EOF
 #    }
 # }
 # ${self.triggers.login_cmd} || oc login ${self.triggers.openshift_api} -u '${self.triggers.openshift_username}' -p '${self.triggers.openshift_password}' --insecure-skip-tls-verify=true || oc login --server='${self.triggers.openshift_api}' --token='${self.triggers.openshift_token}'
 
 
-resource "aws_efs_file_system" "cpd_efs" {
-   creation_token = "${var.cluster_name}_cpd_efs"
+resource "aws_efs_file_system" "openshift_efs" {
+   creation_token = "${var.cluster_name}_openshift_efs"
    performance_mode = "generalPurpose"
    throughput_mode = "provisioned"
    provisioned_throughput_in_mibps = "250"
@@ -50,23 +50,23 @@ data "aws_security_group" "aws_worker_sg" {
   }
 }
 
-resource "aws_efs_mount_target" "cpd-efs-mt" {
+resource "aws_efs_mount_target" "openshift-efs-mt" {
    count = var.az == "multi_zone" ? 3 : 1
-   file_system_id  = aws_efs_file_system.cpd_efs.id
+   file_system_id  = aws_efs_file_system.openshift_efs.id
    subnet_id = var.subnet_ids[count.index]
    security_groups = [data.aws_security_group.aws_worker_sg.id]
-   
+
    depends_on = [
-    aws_efs_file_system.cpd_efs,
+    aws_efs_file_system.openshift_efs,
   ]
  }
- 
+
  resource "aws_security_group_rule" "efs_sg-rule" {
   type              = "ingress"
   from_port         = 2049
   to_port           = 2049
   protocol          = "tcp"
-  cidr_blocks       = [data.aws_vpc.cpd_vpc.cidr_block] 
+  cidr_blocks       = [data.aws_vpc.openshift_vpc.cidr_block]
   # ipv6_cidr_blocks  = [aws_vpc.example.ipv6_cidr_block]
   security_group_id = data.aws_security_group.aws_worker_sg.id
 }
@@ -74,14 +74,14 @@ resource "aws_efs_mount_target" "cpd-efs-mt" {
 resource "aws_security_group" "efs_sg" {
    name = "efs_sg"
    description= "Allos inbound efs traffic from ec2"
-   vpc_id = data.aws_vpc.cpd_vpc.id
+   vpc_id = data.aws_vpc.openshift_vpc.id
 
    ingress {
-     cidr_blocks = [data.aws_vpc.cpd_vpc.cidr_block]
+     cidr_blocks = [data.aws_vpc.openshift_vpc.cidr_block]
      from_port = 2049
-     to_port = 2049 
+     to_port = 2049
      protocol = "tcp"
-   }     
+   }
 
    tags = {
      Name = var.cluster_name
@@ -145,21 +145,21 @@ resource "aws_iam_role_policy_attachment" "efs-policy-attach" {
 }
 
 resource "null_resource" "nfs_subdir_provisioner_setup" {
-  triggers = { 
+  triggers = {
          login_cmd           =  var.login_cmd
          openshift_username      = regex("username (.*) --password", "${var.login_cmd}")[0]
          openshift_api        =  regex("login (.*) --username","${var.login_cmd}")[0]
          openshift_password      = regex("--password (.*)","${var.login_cmd}")[0]
          cluster_type        = "managed"
-         file_system_id  = aws_efs_file_system.cpd_efs.id
+         file_system_id  = aws_efs_file_system.openshift_efs.id
   }
   provisioner "local-exec" {
     command = <<EOF
-    bash efs/setup-nfs.sh ${self.triggers.openshift_api} '${self.triggers.openshift_username}' '${self.triggers.openshift_password}' '${self.triggers.file_system_id}' '${var.vpc_id}' '${data.aws_vpc.cpd_vpc.cidr_block}' '${var.region}' '${data.aws_security_group.aws_worker_sg.id}'
+    bash efs/setup-nfs.sh ${self.triggers.openshift_api} '${self.triggers.openshift_username}' '${self.triggers.openshift_password}' '${self.triggers.file_system_id}' '${var.vpc_id}' '${data.aws_vpc.openshift_vpc.cidr_block}' '${var.region}' '${data.aws_security_group.aws_worker_sg.id}'
 EOF
   }
   depends_on = [
-    resource.aws_efs_mount_target.cpd-efs-mt,
+    resource.aws_efs_mount_target.openshift-efs-mt,
     aws_iam_policy.efs_policy,
     aws_iam_role_policy_attachment.efs-policy-attach,
   ]

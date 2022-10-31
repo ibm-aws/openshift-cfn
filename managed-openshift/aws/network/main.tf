@@ -1,4 +1,4 @@
-resource "aws_vpc" "cpdvpc" {
+resource "aws_vpc" "openshift" {
   cidr_block           = var.vpc_cidr
   enable_dns_hostnames = true
   instance_tenancy     = var.tenancy
@@ -9,47 +9,47 @@ resource "aws_vpc" "cpdvpc" {
 }
 
 resource "aws_internet_gateway" "public" {
-  vpc_id = aws_vpc.cpdvpc.id
+  vpc_id = aws_vpc.openshift.id
 }
 
 resource "aws_subnet" "public1" {
-  vpc_id                  = aws_vpc.cpdvpc.id
+  vpc_id                  = aws_vpc.openshift.id
   cidr_block              = var.public_subnet_cidr1
   availability_zone       = var.availability_zone1
   map_public_ip_on_launch = true
   depends_on              = [aws_internet_gateway.public]
 
   tags = {
-    "Name" : join("-", [var.network_tag_prefix, "cpd-public-subnet", var.availability_zone1])
+    "Name" : join("-", [var.network_tag_prefix, "openshift-public-subnet", var.availability_zone1])
   }
 }
 resource "aws_subnet" "public2" {
   count                   = var.az == "multi_zone" ? 1 : 0
-  vpc_id                  = aws_vpc.cpdvpc.id
+  vpc_id                  = aws_vpc.openshift.id
   cidr_block              = var.public_subnet_cidr2
   availability_zone       = var.availability_zone2
   map_public_ip_on_launch = true
   depends_on              = [aws_internet_gateway.public]
 
   tags = {
-    "Name" : join("-", [var.network_tag_prefix, "cpd-public-subnet", var.availability_zone2])
+    "Name" : join("-", [var.network_tag_prefix, "openshift-public-subnet", var.availability_zone2])
   }
 }
 resource "aws_subnet" "public3" {
   count                   = var.az == "multi_zone" ? 1 : 0
-  vpc_id                  = aws_vpc.cpdvpc.id
+  vpc_id                  = aws_vpc.openshift.id
   cidr_block              = var.public_subnet_cidr3
   availability_zone       = var.availability_zone3
   map_public_ip_on_launch = true
   depends_on              = [aws_internet_gateway.public]
 
   tags = {
-    "Name" : join("-", [var.network_tag_prefix, "cpd-public-subnet", var.availability_zone3])
+    "Name" : join("-", [var.network_tag_prefix, "openshift-public-subnet", var.availability_zone3])
   }
 }
 
 resource "aws_route_table" "public" {
-  vpc_id = aws_vpc.cpdvpc.id
+  vpc_id = aws_vpc.openshift.id
   route {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.public.id
@@ -75,7 +75,7 @@ resource "aws_eip" "eip1" {
   vpc = true
 
   depends_on = [
-    aws_vpc.cpdvpc,
+    aws_vpc.openshift,
   ]
 }
 resource "aws_eip" "eip2" {
@@ -83,7 +83,7 @@ resource "aws_eip" "eip2" {
   vpc   = true
 
   depends_on = [
-    aws_vpc.cpdvpc,
+    aws_vpc.openshift,
   ]
 }
 resource "aws_eip" "eip3" {
@@ -91,7 +91,7 @@ resource "aws_eip" "eip3" {
   vpc   = true
 
   depends_on = [
-    aws_vpc.cpdvpc,
+    aws_vpc.openshift,
   ]
 }
 resource "aws_nat_gateway" "nat1" {
@@ -109,39 +109,39 @@ resource "aws_nat_gateway" "nat3" {
   subnet_id     = aws_subnet.public3[0].id
 }
 resource "aws_subnet" "private1" {
-  vpc_id            = aws_vpc.cpdvpc.id
+  vpc_id            = aws_vpc.openshift.id
   cidr_block        = var.private_subnet_cidr1
   availability_zone = var.availability_zone1
   depends_on        = [aws_nat_gateway.nat1]
 
   tags = {
-    "Name" : join("-", [var.network_tag_prefix, "cpd-private-subnet", var.availability_zone1])
+    "Name" : join("-", [var.network_tag_prefix, "openshift-private-subnet", var.availability_zone1])
   }
 }
 resource "aws_subnet" "private2" {
   count             = var.az == "multi_zone" ? 1 : 0
-  vpc_id            = aws_vpc.cpdvpc.id
+  vpc_id            = aws_vpc.openshift.id
   cidr_block        = var.private_subnet_cidr2
   availability_zone = var.availability_zone2
   depends_on        = [aws_nat_gateway.nat2]
 
   tags = {
-    "Name" : join("-", [var.network_tag_prefix, "cpd-private-subnet", var.availability_zone2])
+    "Name" : join("-", [var.network_tag_prefix, "openshift-private-subnet", var.availability_zone2])
   }
 }
 resource "aws_subnet" "private3" {
   count             = var.az == "multi_zone" ? 1 : 0
-  vpc_id            = aws_vpc.cpdvpc.id
+  vpc_id            = aws_vpc.openshift.id
   cidr_block        = var.private_subnet_cidr3
   availability_zone = var.availability_zone3
   depends_on        = [aws_nat_gateway.nat3]
 
   tags = {
-    "Name" : join("-", [var.network_tag_prefix, "cpd-private-subnet", var.availability_zone3])
+    "Name" : join("-", [var.network_tag_prefix, "openshift-private-subnet", var.availability_zone3])
   }
 }
 resource "aws_route_table" "private1" {
-  vpc_id = aws_vpc.cpdvpc.id
+  vpc_id = aws_vpc.openshift.id
   route {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_nat_gateway.nat1.id
@@ -149,7 +149,7 @@ resource "aws_route_table" "private1" {
 }
 resource "aws_route_table" "private2" {
   count  = var.az == "multi_zone" ? 1 : 0
-  vpc_id = aws_vpc.cpdvpc.id
+  vpc_id = aws_vpc.openshift.id
   route {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_nat_gateway.nat2[0].id
@@ -157,7 +157,7 @@ resource "aws_route_table" "private2" {
 }
 resource "aws_route_table" "private3" {
   count  = var.az == "multi_zone" ? 1 : 0
-  vpc_id = aws_vpc.cpdvpc.id
+  vpc_id = aws_vpc.openshift.id
   route {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_nat_gateway.nat3[0].id
@@ -184,7 +184,7 @@ protocols.
 resource "aws_security_group" "openshift-vpc" {
   name        = "${var.network_tag_prefix}-openshift-vpc"
   description = "Default security group that allows all instances in the VPC to talk to each other over any port and protocol."
-  vpc_id      = aws_vpc.cpdvpc.id
+  vpc_id      = aws_vpc.openshift.id
   ingress {
     from_port = "0"
     to_port   = "0"

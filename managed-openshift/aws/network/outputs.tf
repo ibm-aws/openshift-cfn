@@ -1,5 +1,5 @@
 output "vpcid" {
-  value = aws_vpc.cpdvpc.id
+  value = aws_vpc.openshift.id
 }
 
 output "public_subnet1_id" {

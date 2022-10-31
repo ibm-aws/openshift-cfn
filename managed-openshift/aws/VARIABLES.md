@@ -30,7 +30,7 @@
 | `cluster_network_cidr` | 10.128.0.0/14 | The CIDR block for the Openshift cluster overlay network cidr to be created. |
 | `cluster_network_host_prefix` | 23 | Host prefix for the cluster network. |
 | `service_network_cidr` | 172.30.0.0/16 | The CIDR cidr block for Openshift cluster  services |
-| `az` | single_zone | The number of Availability Zones to be used for the deployment. Keep in mind that some Regions may be limited to two Availability Zones. For a IBM Cloud Pak for Data cluster to be highly available, three Availability Zones are needed to avoid a single point of failure. Allowed values: `single_zone` and `multi_zone`. |
+| `az` | single_zone | The number of Availability Zones to be used for the deployment. Keep in mind that some Regions may be limited to two Availability Zones. Allowed values: `single_zone` and `multi_zone`. |
 | `availability_zone1` | "" | Availability zone values, leave it as it is if you don't want to provide the value, in that case it will be automatically selected based on the region. For `single_zone` installation, provide only `availability_zone1` value. |
 | `availability_zone2` | "" | Availability zone values, leave it as it is if you don't want to provide the value, in that case it will be automatically selected based on the region. For `single_zone` installation, provide only `availability_zone1` value. |
 | `availability_zone3` | "" | Availability zone values, leave it as it is if you don't want to provide the value, in that case it will be automatically selected based on the region. For `single_zone` installation, provide only `availability_zone1` value. |
@@ -38,30 +38,3 @@
 | `storage_option` |`efs-ebs` | Supported storage types are efs and ebs, efs only or ocs.|
 | `efs` |`enable = true` | Set to enable, if storage_option is efs-ebs or efs, otherwise set it to false |
 | `ocs` |`enable = false` | Set to enable, if OCS. The EC2 instance type for the OpenShift container storage (OCS) instances. Make sure your region supports the selected instance type. Supported ocs instance types [here](./INSTANCE-TYPES.md) |
-| `portworx_enterprise` | `enable = false` | See PORTWORX.md on how to get the Cluster ID. |
-| `portworx_essentials` | `enable = false`  | See PORTWORX-ESSENTIALS.md on how to get the Cluster ID, User ID and OSB Endpoint |
-| `portworx_ibm` | | NOTE: This option will only work if deployed from a RHEL machine with podman installed. This is the IBM freemium version of Portworx. It is limited to 5TB and 5Nodes. |
-| Cloud Pak for Data |
-| `accept_cpd_license` | reject | Read and accept license [here](https://www14.software.ibm.com/cgi-bin/weblap/lap.pl?li_formnum=L-DNAA-BZTPEW). Allowed values `accept / reject`. |
-| `cpd_api_key` | Requires input | Enter the API Key. To generate API Key select [Entitlement Key](https://myibm.ibm.com/products-services/containerlibrary). For external registries, enter password here |
-| `cpd_namespace` | zen | The OpenShift project that will be created for deploying Cloud Pak for Data. It can be any lowercase string. |
-| `cpd_version` | 4.5.0 | The Cloud Pak for Data version to install. |
-| `cpd_platform` | yes | Must be `yes` to install Cloud Pak for Data platform. |
-| `data_virtualization` | no | Enter `yes` to install the Data Virtualization Add-on service. If you installing this service, you need to install `data_management_console` service as well. |
-| `apache_spark` | no | Enter `yes` to install the Apache Spark Add-on service. |
-| `watson_knowledge_catalog` | no | Enter `yes` to install the Watson Knowledge Catalog Add-on service. |
-| `watson_studio_library` | no | Enter `yes` to install the Watson Studio Add-on service. |
-| `watson_machine_learning` | no | Enter `yes` to install the Watson Machine Learning Add-on service. |
-| `watson_ai_openscale` | no | Enter `yes` to install the Watson OpenScale and Watson Machine Learning Add-on services. |
-| `cognos_dashboard_embedded` | no | Enter `yes` to install the Cognos dashboard embedded Add-on service. |
-| `datastage` | no | Enter `yes` to install the datastage Add-on service. |
-| `db2-warehouse` | no | Enter `yes` to install the DB2Warehouse Add-on service. If you installing this service, you need to install `data-management-console` service as well.  |
-| `data_management_console` | no | Enter `yes` to install the data management console Add-on service. |
-| `cognos_analytics` | no | Enter `yes` to install the Cognos Analytics Add-on service. |
-| `spss-modeler` | no | Enter `yes` to install the SPSS Modeler Add-on service. |
-| `db2_oltp` | no | Enter `yes` to install the DB2OLTP service. |
-| `master_data_management` | no | Enter `yes` to install the Master Data Management 360 service. |
-| `decision_optimization` | no | Enter `yes` to install the Decision Optimization service. |
-| `planning_analytics` | no | Enter `yes` to install the Planning Analytics Add-on service. |
-| `bigsql` | no | Enter `yes` to install the BigSQL. |
-
