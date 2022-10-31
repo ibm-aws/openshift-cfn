@@ -1,6 +1,6 @@
 # Red Hat OpenShift
 
-[Red Hat OpenShift] OpenShift Container Platform is a platform for developing and running containerized applications. It is designed to allow applications and the data centers that support them to expand from just a few machines and applications to thousands of machines that serve millions of clients.
+Red Hat OpenShift Container Platform is a platform for developing and running containerized applications. It is designed to allow applications and the data centers that support them to expand from just a few machines and applications to thousands of machines that serve millions of clients.
 
 
 This repository contains automated scripts/deployment steps to get you started on Red Hat OpenShift deployed as managed or self platforms.
