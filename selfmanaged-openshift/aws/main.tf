@@ -20,10 +20,9 @@ locals {
   worker_subnet3_id   = var.new_or_existing_vpc_subnet == "new" && var.az == "multi_zone" ? module.network[0].worker_subnet3_id[0] : var.worker_subnet3_id
   single_zone_subnets = [local.worker_subnet1_id]
   multi_zone_subnets  = [local.worker_subnet1_id, local.worker_subnet2_id, local.worker_subnet3_id]
-  openshift_api       = var.existing_cluster ? var.existing_openshift_api : module.ocp[0].openshift_api
-  openshift_username  = var.existing_cluster ? var.existing_openshift_username : module.ocp[0].openshift_username
-  openshift_password  = var.existing_cluster ? var.existing_openshift_password : module.ocp[0].openshift_password
-  openshift_token     = var.existing_openshift_token
+  openshift_api       = module.ocp[0].openshift_api
+  openshift_username  = module.ocp[0].openshift_username
+  openshift_password  = module.ocp[0].openshift_password
   cluster_type        = "selfmanaged"
 }
 
@@ -70,7 +69,7 @@ resource "null_resource" "permission_resource_validation" {
 }
 
 module "network" {
-  count               = var.new_or_existing_vpc_subnet == "new" && var.existing_cluster == false ? 1 : 0
+  count               = var.new_or_existing_vpc_subnet == "new" ? 1 : 0
   source              = "./network"
   vpc_cidr            = var.vpc_cidr
   network_tag_prefix  = var.cluster_name
@@ -93,7 +92,7 @@ module "network" {
 }
 
 module "ocp" {
-  count                           = var.existing_cluster ? 0 : 1
+  count                           = 1
   source                          = "./ocp"
   openshift_installer_url         = "https://mirror.openshift.com/pub/openshift-v4/clients/ocp"
   multi_zone                      = var.az == "multi_zone" ? true : false
